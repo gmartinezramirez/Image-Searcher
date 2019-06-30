@@ -3,8 +3,6 @@ import os
 import numpy
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LogisticRegression
 
 from collections import defaultdict
 
