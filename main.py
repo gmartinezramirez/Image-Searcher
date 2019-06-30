@@ -62,3 +62,11 @@ if __name__ == '__main__':
         ' '.join).reset_index()
     df_test_captions_grouped_by_description = df_test_captions.groupby('filename')['description'].apply(
         ' '.join).reset_index()
+
+    texts_train = df_train_captions_grouped_by_description['description']
+
+    vectorizer = TfidfVectorizer(lowercase=False, ngram_range=(1, 3), max_df=0.9, min_df=0.002, norm=None)
+    vectorizer.fit(texts_train)
+    X_train = vectorizer.transform(texts_train)
+    print("Training: {}".format(X_train.shape))
+
