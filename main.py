@@ -2,10 +2,10 @@ import os
 
 import numpy
 
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.linear_model.logistic import LogisticRegression
 
-from collections import defaultdict
-
+import pandas as pd
 import logging
 
 FILEPATH_TRAIN_IMAGES_NAME = "data/train/train_images_names.txt"
@@ -47,28 +47,18 @@ def load_captions(file_captions):
     return [line.strip().split("\t") for line in open(file_captions, encoding='utf-8')]
 
 
-def analyze_text_with_tf_idf(corpus):
-    vect_words = TfidfVectorizer(lowercase=False, ngram_range=(1, 3), max_df=0.9, min_df=0.002, norm=None)
-    vect_words.fit(corpus)
-
-
-def load_all_filename_with_his_descriptions(train_captions):
-    default_dict = defaultdict(list)
-
-    for filename, corpus in train_captions:
-        default_dict[filename].append(corpus)
-
-    return dict((filename, tuple(description)) for filename, description in default_dict.items())
-
-
 if __name__ == '__main__':
     (train_names, train_vectors) = load_train_vectors()
     (test_names, test_vectors) = load_test_vectors()
 
+    df_train_names = pd.DataFrame(train_names, columns=['filename'])
+
     train_captions = load_captions(FILEPATH_TRAIN_CAPTION)
     test_captions = load_captions(FILEPATH_TEST_CAPTION)
 
-    documents = load_all_filename_with_his_descriptions(train_captions)
-
-    for filename in documents:
-        analyze_text_with_tf_idf(documents[filename])
+    df_train_captions = pd.DataFrame(train_captions, columns=['filename', 'description'])
+    df_test_captions = pd.DataFrame(test_captions, columns=['filename', 'description'])
+    df_train_captions_grouped_by_description = df_train_captions.groupby('filename')['description'].apply(
+        ' '.join).reset_index()
+    df_test_captions_grouped_by_description = df_test_captions.groupby('filename')['description'].apply(
+        ' '.join).reset_index()
