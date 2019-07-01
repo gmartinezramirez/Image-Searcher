@@ -6,7 +6,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.linear_model.logistic import LogisticRegression
 
 import pandas as pd
-import logging
 
 FILEPATH_TRAIN_IMAGES_NAME = "data/train/train_images_names.txt"
 FILEPATH_TRAIN_IMAGES_VECTORS = "data/train/train_images_vectors.bin"
@@ -34,13 +33,13 @@ def load_file(file_names, file_vectors, num_vectors, vector_dimensions):
 
 
 def load_train_vectors():
-    print ("Load train vectors")
+    print("Load train vectors")
     return load_file(FILEPATH_TRAIN_IMAGES_NAME, FILEPATH_TRAIN_IMAGES_VECTORS, TRAIN_NUM_VECTORS,
                      TRAIN_VECTOR_DIMENSIONS)
 
 
 def load_test_vectors():
-    print ("Load test vectors")
+    print("Load test vectors")
     return load_file(FILEPATH_TEST_IMAGES_NAME, FILEPATH_TEST_IMAGES_VECTORS, TEST_NUM_VECTORS, TEST_VECTOR_DIMENSIONS)
 
 
@@ -54,7 +53,7 @@ def get_text_descriptor_by_tf_idf(texts):
     tf_idf_vect.fit(texts)
     X_train = tf_idf_vect.transform(texts)
     print("Training: {}".format(X_train))
-    print (X_train.shape)
+    print(X_train.shape)
     return X_train
 
 
@@ -74,10 +73,33 @@ def get_all_captions_of_all_images_names(train_captions):
     return captions_train
 
 
+def get_logistic_regression_classifier(X_train, y_train):
+    print("X train shape")
+    print(X_train.shape)
+    print("y_train")
+    print(y_train.shape)
+    print("Entrenar: {} -> {}".format(X_train.shape, len(y_train)))
+
+    # TODO REMOVE THIS: this is only a hack for working with the logisticRegression and binary classification.
+    import random
+    test_temp_binary_label = []
+    for i in range(20000):
+        test_temp_binary_label.append(random.randint(0, 1))
+
+    classifier = LogisticRegression()
+    classifier.fit(X_train, test_temp_binary_label)
+
+    return classifier
+
+
 if __name__ == '__main__':
     (train_names, train_vectors) = load_train_vectors()
     (test_names, test_vectors) = load_test_vectors()
 
     train_captions = load_captions(FILEPATH_TRAIN_CAPTION)
+
     captions_train = get_images_names_with_captions_grouped(train_captions)
+
     X_train = get_text_descriptor_by_tf_idf(captions_train['caption'])
+
+    classifier = get_logistic_regression_classifier(X_train, train_vectors)
