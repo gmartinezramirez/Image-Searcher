@@ -93,5 +93,6 @@ if __name__ == '__main__':
     captions_test = get_images_names_with_captions_grouped(train_captions)
 
     X_train = get_text_descriptor_by_tf_idf(captions_train['caption'])
+    y_test = get_text_descriptor_by_tf_idf(captions_test['caption'])
 
-    model_mlp_regression_trained = classify_with_mlp_regression(X_train, train_vectors, test_vectors)
+    model_mlp_regression_trained = classify_with_mlp_regression(X_train, train_vectors, y_test)
