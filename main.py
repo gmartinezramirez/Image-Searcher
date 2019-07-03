@@ -58,12 +58,12 @@ def get_text_descriptor_by_tf_idf(texts):
     return X_train
 
 
-def get_images_names_with_captions_grouped(dataframe):
+def get_images_names_with_captions_grouped(dataframe, names_to_order):
     df = pd.DataFrame(dataframe, columns=['image_name', 'caption'])
     df_grouped_by_caption = df.groupby('image_name')['caption'].apply(
         ' '.join).reset_index()
     df_grouped_by_caption_with_image_name_as_index = df_grouped_by_caption.set_index('image_name')
-    df_final = df_grouped_by_caption_with_image_name_as_index.reindex(train_names)
+    df_final = df_grouped_by_caption_with_image_name_as_index.reindex(names_to_order)
     return df_final
 
 
@@ -74,25 +74,32 @@ def get_all_captions_of_all_images_names(train_captions):
     return captions_train
 
 
-def classify_with_mlp_regression(x, y, test_vectors):
+def classify_with_mlp_regression(X_train, labels_train):
     neuronal_network = MLPRegressor(hidden_layer_sizes=(3), 
                   activation='tanh', solver='lbfgs')
-    model_trained = neuronal_network.fit(x, y)
+    model_trained = neuronal_network.fit(X_train, labels_train)
     print ("Train sucessful")
-    neuronal_network.predict(test_vectors)
-    print ("Predict sucessful")
     return model_trained
+
+
+def evaluate_model(classifer, X_test, labels_test) :
+    print("Evaluar: {} -> {}".format(X_test.shape, len(labels_test)))
+    score = classifier.score(X_test, labels_test)
+    print("Accuracy:", score)
+
 
 if __name__ == '__main__':
     (train_names, train_vectors) = load_train_vectors()
     (test_names, test_vectors) = load_test_vectors()
 
     train_captions = load_captions(FILEPATH_TRAIN_CAPTION)
+    test_captions = load_captions(FILEPATH_TEST_CAPTION)
 
-    captions_train = get_images_names_with_captions_grouped(train_captions)
-    captions_test = get_images_names_with_captions_grouped(train_captions)
+    captions_train = get_images_names_with_captions_grouped(train_captions, train_names)
+    captions_test = get_images_names_with_captions_grouped(test_captions, test_names)
 
     X_train = get_text_descriptor_by_tf_idf(captions_train['caption'])
-    y_test = get_text_descriptor_by_tf_idf(captions_test['caption'])
+    X_test = get_text_descriptor_by_tf_idf(captions_test['caption'])
 
-    model_mlp_regression_trained = classify_with_mlp_regression(X_train, train_vectors, y_test)
+    classifier = classify_with_mlp_regression(X_train, train_vectors)
+    evaluate_model(classifier, X_test, test_vectors)
