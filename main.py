@@ -4,6 +4,7 @@ import numpy
 
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.linear_model.logistic import LogisticRegression
+from sklearn.neural_network import MLPRegressor
 
 import pandas as pd
 
@@ -73,24 +74,14 @@ def get_all_captions_of_all_images_names(train_captions):
     return captions_train
 
 
-def get_logistic_regression_classifier(X_train, y_train):
-    print("X train shape")
-    print(X_train.shape)
-    print("y_train")
-    print(y_train.shape)
-    print("Entrenar: {} -> {}".format(X_train.shape, len(y_train)))
-
-    # TODO REMOVE THIS: this is only a hack for working with the logisticRegression and binary classification.
-    import random
-    test_temp_binary_label = []
-    for i in range(20000):
-        test_temp_binary_label.append(random.randint(0, 1))
-
-    classifier = LogisticRegression()
-    classifier.fit(X_train, test_temp_binary_label)
-
-    return classifier
-
+def classify_with_mlp_regression(x, y, test_vectors):
+    neuronal_network = MLPRegressor(hidden_layer_sizes=(3), 
+                  activation='tanh', solver='lbfgs')
+    model_trained = neuronal_network.fit(x, y)
+    print ("Train sucessful")
+    neuronal_network.predict(test_vectors)
+    print ("Predict sucessful")
+    return model_trained
 
 if __name__ == '__main__':
     (train_names, train_vectors) = load_train_vectors()
@@ -99,7 +90,8 @@ if __name__ == '__main__':
     train_captions = load_captions(FILEPATH_TRAIN_CAPTION)
 
     captions_train = get_images_names_with_captions_grouped(train_captions)
+    captions_test = get_images_names_with_captions_grouped(train_captions)
 
     X_train = get_text_descriptor_by_tf_idf(captions_train['caption'])
 
-    classifier = get_logistic_regression_classifier(X_train, train_vectors)
+    model_mlp_regression_trained = classify_with_mlp_regression(X_train, train_vectors, test_vectors)

@@ -8,13 +8,13 @@ cumplen con la descripción dada.
 ## TODO 
 * Fase 1: entrenamiento
 
-  1.1- [X] Implementar un método que calcule un descriptor de texto para cada frase en español. 
-  1.2- [ ] Utilizando los datos de entrenamiento, deberá entrenar un modelo de regresión basado en redes neuronales que para
+  1.1- [DONE] Implementar un método que calcule un descriptor de texto para cada frase en español. 
+  1.2- [DOING] Utilizando los datos de entrenamiento, deberá entrenar un modelo de regresión basado en redes neuronales que para
    cada descriptor de texto de entrada pueda predecir el descriptor visual de la imagen correspondiente.
 
 * Fase 2: búsqueda
 
-  2.1- [ ] El método de búsqueda recibe una frase en español de consulta del usuario a la que deberá calcular su descriptor 
+  2.1- [DOING] El método de búsqueda recibe una frase en español de consulta del usuario a la que deberá calcular su descriptor 
   de texto. 
   2.2- [ ] Utilizar el modelo de regresión ya entrenado con el descriptor de texto como entrada y obtener como salida una 
   predicción de descriptor visual. 
