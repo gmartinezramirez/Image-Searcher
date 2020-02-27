@@ -1,5 +1,7 @@
 # Visual image search
 
+Image search engine where the user describes with words the scene he is looking for and the system locates within an image database without labeling the images that best fit the given description.
+
 ## Requeriments
 
 * Python 3.6+
